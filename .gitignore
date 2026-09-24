@@ -1,1 +1,6 @@
-
+phishsrv
+phishsrv.exe
+captures.jsonl
+captures*.jsonl
+*.log
+.DS_Store
